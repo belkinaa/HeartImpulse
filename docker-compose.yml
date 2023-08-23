@@ -1,0 +1,56 @@
+version: '3.5'
+
+services:
+  app:
+    build: ./app
+    links:
+      - db
+    restart: always
+    volumes:
+      - ./app:/app
+    expose:
+      - 5000
+    environment:
+      USER_FOR_DOCKER: "${USER_FOR_DOCKER}"
+      PASSWORD_FOR_DOCKER: "${PASSWORD_FOR_DOCKER}"
+    depends_on:
+      - db
+    container_name: stend2_app
+    command: python wsgi.py
+
+
+  nginx:
+    #volumes:
+    #  - ./file_setting/server.crt:/etc/nginx/server.crt
+    #  - ./file_setting/server.key:/etc/nginx/server.key
+    build: ./nginx
+    container_name: stend2_nginx
+    restart: always
+    ports:
+      - 8082:85
+      - 8083:8080
+    depends_on:
+      - app
+
+  db:
+    image: postgres:14.6
+    container_name: stend2_db
+    restart: always
+    environment:
+      POSTGRES_USER: "${USER_FOR_DOCKER}"
+      POSTGRES_PASSWORD: "${PASSWORD_FOR_DOCKER}"
+      POSTGRES_DB: "db_docker"
+    expose:
+      - 5432
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+
+  adminer:
+    depends_on:
+      - db
+    image: adminer
+    container_name: stend2_adminer
+    restart: always
+    expose:
+      - 8080
