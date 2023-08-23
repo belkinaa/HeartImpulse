@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Журнал пользователя</title>
+    <style>
+.input_form  {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #555;
+  outline: none;
+
+}
+.midle_inform{
+  padding: 5px;
+  margin: 5px;
+}
+.bold_inform{
+    font-weight: bold;
+}
+
+.input_form:focus {
+  background-color: lightblue;
+}
+
+.information{
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding: 5px;
+  margin: 5px;
+}
+}
+.input_data{
+flex-direction: column;
+
+}
+</style>
+</head>
+<body>
+<h2>Введите e-mail пользователя и его параметр пулса</h2>
+
+<p>Получите соотношение текущего пульса со средним показателем</p>
+
+<form>
+    <div class="input_data">
+        <div class="information">
+            <div class="input_data">
+                <form action="/" method="get">
+                    <div>
+                        <label for="email">e-mail</label>
+                        <input class="input_form" type="email" id="email" required name="email" placeholder="user@domain.ru">
+                    </div>
+                    <div>
+                        <label for="pulse">Пульс</label>
+                        <input class="input_form" type="number" id="pulse" required name="pulse" placeholder="60">
+                    </div>
+                     <input type="submit" value="Записать">
+                </form>
+            </div>
+            {% if informationUser['all_rows']: %}
+            <div>
+                Статистика
+                <table border="1">
+                     <tr>
+                        <th>Дата измерения
+                        <th>Пульс
+
+                {% for item in informationUser['all_rows']: %}
+                    <tr>
+                        <td>{{ item.date }}
+                        <td>{{ item.pulse }}
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="information">
+             <div class="midle_inform">
+                Информация о пользователе:
+             </div>
+             <div class="midle_inform bold_inform">
+                 {{ informationUser['user'] }}
+             </div>
+        </div>
+        <div class="information">
+            <div class="midle_inform">
+                Средний показатель:
+            </div>
+            <div class="midle_inform bold_inform">
+                {{ informationUser['midle_pulse']|round(4) }}
+            </div>
+        </div>
+        <div class="information">
+            <div class="midle_inform">
+                Текущий показатель:
+            </div>
+            <div class="midle_inform bold_inform">
+                {{ informationUser['curent_pulse'] }}
+            </div>
+            <div class="midle_inform">
+                {% if  informationUser['curent_pulse'] == informationUser['midle_pulse']: %}
+                    равен среднему
+                {% elif  informationUser['curent_pulse'] > informationUser['midle_pulse']: %}
+                    больше среднего на {{(informationUser['curent_pulse'] - informationUser['midle_pulse'])|round(4)}}
+                {% else: %}
+                    меньше среднего на {{(informationUser['midle_pulse'] -  informationUser['curent_pulse'])|round(4)}}
+                {% endif %}
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+
+
+
+</form>
+
+</body>
+</html>
